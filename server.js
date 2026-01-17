@@ -10,10 +10,10 @@ app.use(express.static("public"));
 
 // الاتصال بقاعدة البيانات
 const db = await mysql.createPool({
-  host: "fdb1033.awardspace.net",
-  user: "4382019_sahadz",
-  password: "T+20102010",
-  database: "4382019_sahadz"
+  host: "sql7.freesqldatabase.com",
+  user: "sql7814603",
+  password: "n93W4SHhPD",
+  database: "sql7814603"
 });
 
 // نقطة الشات
