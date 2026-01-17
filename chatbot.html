@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" href="images/logo.png" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todist | Riad AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Rakkas&family=Tajawal&display=swap" rel="stylesheet">
+  <style>
+    /* -------- Reset -------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Tajawal", sans-serif;
+    }
+
+    body {
+      background: url('1.jpeg') center/cover no-repeat fixed;
+    }
+
+    .rakkas-regular {
+      font-family: "Rakkas", serif;
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    /* -------- Chat Container -------- */
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100vh;
+      padding: 10px;
+      padding-bottom: 80px;
+    }
+
+    /* -------- Chat Header -------- */
+    .chat-header {
+      color: white;
+      text-align: center;
+      padding: 15px;
+      border-radius: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    /* -------- Chat Box -------- */
+    .chat-box {
+      flex: 1;
+      overflow-y: auto;
+      background: rgba(175, 175, 175, 0.11);
+      padding: 10px;
+      border-radius: 30px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 10px;
+      scroll-behavior: smooth;
+    }
+
+    /* -------- Messages -------- */
+    .message {
+      max-width: 80%;
+      padding: 10px;
+      margin: 6px 0;
+      border-radius: 12px;
+      line-height: 1.4;
+      word-wrap: break-word;
+      font-size: 18px;
+      background: transparent;
+    }
+
+    .message.user {
+      background-color: #65f56e42;
+      color: white;
+      align-self: flex-start;
+      border-bottom-right-radius: 0;
+    }
+
+    .message.bot {
+      background-color: #f0f0f0;
+      color: #000;
+      align-self: flex-end;
+      border-bottom-left-radius: 0;
+    }
+
+    /* -------- Chat Input -------- */
+    .chat-input {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      padding: 8px;
+      border-radius: 15px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      margin-top: 10px;
+      margin-bottom: 30px;
+      
+    }
+
+    .chat-input input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      padding: 10px;
+      border-radius: 10px;
+      background-color: #f2f2f2;
+      margin-right: 8px;
+      margin-left: 10px;
+    }
+
+    .chat-input button {
+      background-color: #003103;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .chat-input button:hover {
+      background-color: #145e19;
+    }
+
+    /* -------- Loading Dots -------- */
+    .loading {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      margin-top: 10px;
+      background: transparent;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      background-color: #007bff;
+      border-radius: 50%;
+      animation: blink 1.4s infinite both;
+    }
+
+    .dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes blink {
+      0%, 80%, 100% {
+        opacity: 0;
+      }
+      40% {
+        opacity: 1;
+      }
+    }
+
+    /* -------- Bottom Navigation -------- */
+    .bottom-nav {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 50%;
+        max-width: 300px;
+        height: 60px;
+        background-color: #003103;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        border-radius: 30px;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
+        z-index: 1000;
+    }
+
+    .bottom-nav a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        position: relative;
+    }
+
+    /* تنسيق خاص لأيقونة الأدمن */
+    .admin-icon {
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .admin-icon:hover {
+        transform: scale(1.1);
+    }
+
+    .admin-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #fbbf24;
+        color: #1a1a1a;
+        font-size: 12px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: pulse 2s infinite;
+    }
+    /* -------- Product Card -------- */
+    .product-card {
+      display: block;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin: 10px 0;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.2s;
+      margin-left: 36px;
+    }
+
+    .product-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      background: transparent;
+    }
+
+    .product-card-content {
+      padding: 12px;
+      background: transparent;
+    }
+
+    .product-location {
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 5px;
+      background: transparent;
+    }
+
+    .product-details {
+      font-size: 13px;
+      color: #666;
+      margin: 5px 0;
+      line-height: 1.4;
+      background: transparent;
+    }
+
+    .product-price {
+      color: #27ae60;
+      font-weight: bold;
+      font-size: 16px;
+      margin-top: 8px;
+      background: transparent;
+    }
+
+    /* -------- Responsive (Mobile Focus) -------- */
+    @media (max-width: 480px) {
+      .chat-header {
+        font-size: 16px;
+        padding: 12px;
+      }
+
+      .message {
+        font-family: "lalezar", sans-serif;
+        font-size: 18px;
+        max-width: 90%;
+      }
+
+      .chat-input input {
+        font-family: "lalezar", sans-serif;
+        font-size: 18px;
+        font-weight: 500;
+      }
+
+      .chat-input button {
+        font-family: "lalezar", sans-serif;
+        padding: 8px 12px;
+        font-size: 18px;
+      }
+
+      .bottom-nav {
+        width: 90%;
+        height: 55px;
+        bottom: 15px;
+      }
+
+      .bottom-nav a img {
+        width: 28px;
+        height: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header"><h3>SahaDZ AI ChatBot</h3></div>
+
+    <div class="chat-box" id="chat-box">
+      <div class="message bot">مرحبًا ، أنا مساعدك الصحي. كيف أقدر أساعدك؟</div>
+    </div>
+
+    <div class="chat-input">
+      <input type="text" id="user-input" placeholder="اكتب رسالتك هنا...">
+      <button id="send-btn">إرسال</button>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav" id="bottomNav">
+    <!-- الرئيسية -->
+    <a href="http://localhost:80/SahaDZ/index.php">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+    </a>
+
+    <!-- الماسح -->
+    <a href="http://localhost:80/SahaDZ/scanner.php">
+      <img src="uploads/barcode.png" style="width:70px;height:70px;" alt="Scanner">
+    </a>
+
+    <a href="http://localhost:80/SahaDZ/products.php">
+           <img src="uploads/find-product-icon.png" style="width: 35px; height: 35px;" alt="">
+        </a>
+
+            <a href="http://localhost:80/SahaDZ/public/chatbot.html">
+           <img src="uploads/ai.png" style="width: 35px; height: 35px;" alt="">
+        </a>
+  </nav>
+
+  <script>
+    fetch("/me")
+      .then(res => res.json())
+      .then(user => {
+        const nav = document.getElementById("bottomNav");
+
+        if (user.is_admin) {
+          // زر الأدمن
+          const adminLink = document.createElement('a');
+          adminLink.href = 'crud.html';
+          adminLink.title = 'Admin Panel';
+          adminLink.innerHTML = `
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+            </svg>
+          `;
+          nav.appendChild(adminLink);
+        } else {
+          // زر المستخدم العادي
+          const userLink = document.createElement('a');
+          userLink.href = 'products.html';
+          userLink.innerHTML = `
+            <img src="uploads/find-product-icon.png"
+                 style="width:35px;height:35px;" alt="Products">
+          `;
+          nav.appendChild(userLink);
+        }
+      })
+      .catch(err => console.error('Error fetching user:', err));
+  </script>
+
+  <script>
+    const chatBox = document.getElementById('chat-box');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+    let loadingElement = null;
+
+    function addMessage(text, type) {
+      const div = document.createElement('div');
+      div.className = `message ${type}`;
+      div.textContent = text;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      return div;
+    }
+
+    function addProductCard(product) {
+      const card = document.createElement('a');
+      card.href = `product/${product.id}`;
+      card.className = 'product-card';
+      
+      card.innerHTML = `
+        <img src="${product.image || 'images/placeholder.jpg'}" alt="${product.name}">
+        <div class="product-card-content">
+          <div class="product-location">${product.name} ★ ${product.brand}</div>
+          <div class="product-details">
+            ${product.product_type}<br>
+            ${product.description ? product.description.substring(0, 60) + '...' : ''}
+          </div>
+          <div class="product-price">${product.price} DZD</div>
+        </div>
+      `;
+      
+      chatBox.appendChild(card);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function showLoading() {
+      loadingElement = document.createElement('div');
+      loadingElement.className = 'loading';
+      loadingElement.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+      chatBox.appendChild(loadingElement);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function hideLoading() {
+      if (loadingElement) {
+        loadingElement.remove();
+        loadingElement = null;
+      }
+    }
+
+    async function sendMessage() {
+      const message = userInput.value.trim();
+      if (!message) return;
+
+      addMessage(message, 'user');
+      userInput.value = '';
+      sendBtn.disabled = true;
+      showLoading();
+
+      try {
+        const response = await fetch('/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ message: message })
+        });
+
+        const data = await response.json();
+        hideLoading();
+
+        if (data.reply) {
+          addMessage(data.reply, 'bot');
+          
+          // إضافة بطاقات المنتجات إذا كانت موجودة
+          if (data.products && data.products.length > 0) {
+            data.products.forEach(product => {
+              addProductCard(product);
+            });
+          }
+        } else if (data.error) {
+          addMessage('⚠️ خطأ: ' + data.error, 'bot');
+        }
+
+      } catch (err) {
+        hideLoading();
+        console.error('❌ خطأ:', err);
+        addMessage('⚠️ فشل الاتصال بالخادم: ' + err.message, 'bot');
+      }
+
+      sendBtn.disabled = false;
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    
+    userInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+
+    userInput.focus();
+  </script>
+</body>
+</html>
