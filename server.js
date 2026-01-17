@@ -2,7 +2,7 @@ import express from "express";
 import fetch from "node-fetch";
 import mysql from "mysql2/promise";
 
-const GEMINI_API_KEY = "AIzaSyBEwUQPOtlaoyvuEf8dnAl-MTFcFU18q94";
+const GEMINI_API_KEY = "AIzaSyDpILuVKi9CINy1loRJd31OnKFHHRTE1NQ";
 
 const app = express();
 app.use(express.json());
